@@ -1,4 +1,4 @@
-﻿
+
 # #############################################################################
 # MICROSOFT - SCRIPT - POWERSHELL
 # NAME: HyperV-Core-ASR.ps1
@@ -9,7 +9,7 @@
 # 
 # COMMENT:  This script will completely setup ASR on Hyper-V Core Servers.
 #
-# REQUIRES: Az
+# REQUIRES: Az.Accounts, Az.RecoveryServices, Az.Resources
 #           
 #
 # VERSION HISTORY
@@ -89,6 +89,7 @@ Write-Host "Selected Vault: " -ForegroundColor Yellow
 Write-Host $VaultSelect.Name -ForegroundColor Green
 Write-Host ""
 $VaultNameFinal = $VaultSelect.Name
+Set-AzRecoveryServicesAsrVaultContext -Vault $VaultSelect
 
 #Declare API Version
 $apiVersion = "?api-version=2019-05-13"
@@ -105,12 +106,20 @@ $headers = @{
 }
 
 $query = Invoke-WebRequest -UseBasicParsing -Method PUT -Headers $headers -ContentType "application/json" -Body "{`"certificateCreateOptions`":{`"validityInHours`":120}}" -Uri "$armResource/subscriptions/$SubIdFinal/resourceGroups/$RgNameFinal/providers/Microsoft.RecoveryServices/vaults/$VaultNameFinal/certificates/CN=CB_$VaultNameFinal-$GetDate-vaultcredentials$apiVersion"
+
 $json = $query.Content | ConvertFrom-Json
+
+$siteChoice = Get-Selection -Options (Get-AzRecoveryServicesAsrFabric | Select-Object -ExpandProperty Name) -Prompt "Select the Hyper-V Site you would like to add this server to."
+$siteSelect = Get-AzRecoveryServicesAsrFabric -Name $siteChoice
+Write-Host "Selected Hyper-V Site: " -ForegroundColor Yellow
+Write-Host $siteSelect.Name -ForegroundColor Green
+Write-Host ""
+$SiteSelectFinal = $siteSelect.SiteIdentifier
+
 
 Write-Host "Downloading VaultCredential File" -ForegroundColor Green
 Write-Host ""
-
-$CredFile = Get-AzRecoveryServicesVaultSettingsFile -Vault $VaultSelect -Certificate $json.properties.certificate
+$CredFile = Get-AzRecoveryServicesVaultSettingsFile -Vault $VaultSelect -SiteIdentifier $siteSelectFinal -SiteFriendlyName $siteSelect.FriendlyName -Certificate $json.properties.certificate
 
 Write-Host "VaultCredential File Downloaded!" -ForegroundColor Green
 Write-Host "Path: " -ForegroundColor Yellow -NoNewline
@@ -190,3 +199,8 @@ else
 
 Write-Host "Script complete." -ForegroundColor Green
 
+
+
+
+
+makecert -r -pe -n "CN=My CA" -ss CA -sr CurrentUser -a sha256 -cy authority -sky signature -sv MyCA.pvk MyCA.cer
