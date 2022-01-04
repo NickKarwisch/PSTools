@@ -180,6 +180,7 @@ else
     Write-Host "Exiting." -ForegroundColor Red
 }
 
+$credpathFull = $credFile.FilePath
 
 $confirmRegister = Read-Host "ASR Provider is ready for registration. Proceed with registration? (y/n)"
 if ($confirmRegister -eq 'y') {
@@ -187,7 +188,7 @@ if ($confirmRegister -eq 'y') {
     $regFriendlyName = Read-Host "Please enter a Friendly Name for this server. This name will be displayed in the Azure Portal."
     Write-Host ""
 
-    Start-Process -NoNewWindow -FilePath "$programfiles\Microsoft Azure Site Recovery Provider\DRConfigurator.exe" -ArgumentList "/r /Friendlyname '$regFriendlyName' /Credentials '$credFile'" -Wait
+    Start-Process -NoNewWindow -FilePath "$programfiles\Microsoft Azure Site Recovery Provider\DRConfigurator.exe" -ArgumentList "/r /Friendlyname $regFriendlyName /Credentials $credpathFull" -Wait
     Write-Host "ASR Provider registration complete." -ForegroundColor Green
     Write-Host ""
     Write-Host "This server should now be displayed in the Azure Portal." -ForegroundColor Green
@@ -198,9 +199,3 @@ else
 }
 
 Write-Host "Script complete." -ForegroundColor Green
-
-
-
-
-
-makecert -r -pe -n "CN=My CA" -ss CA -sr CurrentUser -a sha256 -cy authority -sky signature -sv MyCA.pvk MyCA.cer
