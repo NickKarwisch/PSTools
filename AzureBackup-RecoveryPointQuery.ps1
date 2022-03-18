@@ -111,10 +111,10 @@ Write-Host $BackupItemChoice -ForegroundColor Green
 Write-Host "Full Query:" -ForegroundColor Yellow
 Write-Host "--------------------" -ForegroundColor Yellow
 Write-Host "Subscription Name   : " -ForegroundColor Yellow -NoNewline; Write-Host $SubscriptionDetails.Name -ForegroundColor Green
-Write-Host "Subscription I      : " -ForegroundColor Yellow -NoNewline; Write-Host $SubscriptionDetails.Id -ForegroundColor Green
+Write-Host "Subscription ID     : " -ForegroundColor Yellow -NoNewline; Write-Host $SubscriptionDetails.Id -ForegroundColor Green
 Write-Host "Start Date          : " -ForegroundColor Yellow -NoNewline; Write-Host $StartDate.ToUniversalTime() -ForegroundColor Green
 Write-Host "End Date            : " -ForegroundColor Yellow -NoNewline; Write-Host $EndDate.ToUniversalTime() -ForegroundColor Green
-Write-Host "Vault Name          : " -ForegroundColor Yellow -NoNewline; Write-Host $Vault.Name -ForegroundColor Green
+Write-Host "Vault Name          : " -ForegroundColor Yellow -NoNewline; Write-Host $VaultSelect.Name -ForegroundColor Green
 Write-Host "Container Type      : " -ForegroundColor Yellow -NoNewline; Write-Host $ContainerType -ForegroundColor Green
 Write-Host "Container Name      : " -ForegroundColor Yellow -NoNewline; Write-Host $ContainerSelect.FriendlyName -ForegroundColor Green
 Write-Host "Workload Type       : " -ForegroundColor Yellow -NoNewline; Write-Host $BackupItemWorkloadType -ForegroundColor Green
